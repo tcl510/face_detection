@@ -1,5 +1,5 @@
-rect[] rectangleToRect(Rectangle[] rectangle_array){
-  
+rect[] rectangleToRect(Rectangle[] rectangle_array) { //<>//
+
   //int length = rectangle_array.length;
   ArrayList<rect> rectList = new ArrayList<rect>();
   //rect[] rectList = new rect[length];
@@ -7,18 +7,15 @@ rect[] rectangleToRect(Rectangle[] rectangle_array){
   //  //rectList[i] = 
   //  rectList[i] = new rect(rectangle_array[i]);
   //}
-  for (Rectangle i: rectangle_array){
+  for (Rectangle i : rectangle_array) {
     rectList.add(new rect(i));
   }
   //rect[] rectListArray = ;
 
- return rectList.toArray(new rect[rectList.size()]);
-  
-  
-    
-  }
-  ellipse[] rectangleToEllipse(Rectangle[] rectangle_array){
-  
+  return rectList.toArray(new rect[rectList.size()]);
+}
+ellipse[] rectangleToEllipse(Rectangle[] rectangle_array) {
+
   //int length = rectangle_array.length;
   ArrayList<ellipse> rectList = new ArrayList<ellipse>();
   //rect[] rectList = new rect[length];
@@ -26,22 +23,19 @@ rect[] rectangleToRect(Rectangle[] rectangle_array){
   //  //rectList[i] = 
   //  rectList[i] = new rect(rectangle_array[i]);
   //}
-  for (Rectangle i: rectangle_array){
+  for (Rectangle i : rectangle_array) {
     rectList.add(new ellipse(i));
   }
   //rect[] rectListArray = ;
 
- return rectList.toArray(new ellipse[rectList.size()]);
-  
-  
-    
-  }
-  
-  
+  return rectList.toArray(new ellipse[rectList.size()]);
+}
 
 
 
-boolean ellipseWithEllipse(PVector cord, PVector size, PVector otherCord, PVector otherSize) { //<>//
+
+
+boolean ellipseWithEllipse(PVector cord, PVector size, PVector otherCord, PVector otherSize) {
   if (PVector.dist(cord, otherCord) < size.x+otherSize.x) {
     println("collided");
     return true;
@@ -66,28 +60,35 @@ boolean rectWithRect(PVector cord, PVector size, PVector otherCord, PVector othe
 
 boolean rectWithEllipse(PVector boxCord, PVector boxSize, PVector ellipseCord, PVector ellipseSize) {
   //define bounds of this box
-  PVector[] corners = findCorners(boxCord, boxSize);
+  //PVector[] corners = findCorners(boxCord, boxSize);
   //check if any point is inside the radius
-  
+
   //remember in this case, we only have circles so far, so x or y would be the same and both would be radius
-  
-  for (PVector i : corners) {
-    float distance = i.dist(ellipseCord);
-    //if the point's distance from the center is smaller then the radius then there is a collision
-    if (distance < ellipseSize.x/2) {
-      println("collided");
-      return true;
-    }
-  }
-  
-  float angle = atan((boxSize.x/2)/(boxSize.y/2));
-  float x = cos(angle) * boxSize.x/2;
-  
-  
-  return false;
+
+  //for (PVector i : corners) {
+  //  float distance = i.dist(ellipseCord);
+  //  //if the point's distance from the center is smaller then the radius then there is a collision
+  //  if (distance < ellipseSize.x/2) {
+  //    println("collided");
+  //    return true;
+  //  }
+  //}
+
+  //float angle = atan((boxSize.x/2)/(boxSize.y/2));
+  //float x = cos(angle) * boxSize.x/2;
+
+  // clamp(value, min, max) - limits value to the range min..max
+
+  // Find the closest point to the circle within the rectangle
+  float closestX = constrain(ellipseCord.x, boxCord.x + boxSize.x/2, boxCord.x - boxSize.x/2);
+  float closestY = constrain(ellipseCord.y, boxCord.y + boxSize.y/2, boxCord.y - boxSize.y/2);
+  PVector closest = new PVector(closestX, closestY);
+
+  // Calculate the distance between the circle's center and this closest point
+  return PVector.dist(closest, boxCord) + ellipseSize.x/2 < PVector.dist(boxCord, ellipseCord);
 }
 
-boolean rectWithEllipse(rect rect, ellipse ellipse){
+boolean rectWithEllipse(rect rect, ellipse ellipse) {
   return rectWithEllipse(rect.cords, rect.size, ellipse.cords, ellipse.size);
 }
 
@@ -121,7 +122,7 @@ interface object {
   int getType();
 
   boolean collision(object other);
-  
+
   void move(float x, float y);
   void move(PVector delta);
   void moveTo(float x, float y);
@@ -154,7 +155,7 @@ class rect implements object {
   rect(float x, float y) {
     this.size = new PVector(x, y);
   }
-  rect(Rectangle rectangle){
+  rect(Rectangle rectangle) {
     this.size = new PVector (rectangle.width, rectangle.height);
     this.cords = new PVector (rectangle.x, rectangle.y);
   }
@@ -198,8 +199,6 @@ class rect implements object {
   public PVector getSize() {
     return size;
   }
-  
-  
 }
 
 
@@ -218,7 +217,7 @@ class ellipse implements object {
   ellipse() {
     this.size = new PVector(defaultSize, defaultSize);
   }
-    ellipse(Rectangle rect){
+  ellipse(Rectangle rect) {
     this.size = new PVector (rect.width, rect.height);
     this.cords = new PVector (rect.x, rect.y);
   }
